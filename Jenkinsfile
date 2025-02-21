@@ -1,31 +1,33 @@
-
 pipeline {
     agent any
-
     stages {
-        stage('Clone Repository') {
+        stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/your-repo/scientific-calculator.git'
+                git 'https://github.com/AryanRastogi7767/Scientific_Calculator.git'
             }
         }
-        
-        stage('Build & Test') {
+        stage('Run Unit Tests') {
             steps {
-                sh 'python -m unittest discover tests'
+                sh 'python3 -m unittest discover -s . -p "test.py"'
             }
         }
-        
-        stage('Docker Build & Push') {
+        stage('Build Docker Image') {
             steps {
-                sh 'docker build -t your-dockerhub/scientific-calculator .'
-                sh 'docker login -u your-username -p your-password'
-                sh 'docker push your-dockerhub/scientific-calculator'
+                sh 'docker build -t scientific-calculator .'
             }
         }
-
+        stage('Push to Docker Hub') {
+            steps {
+                withCredentials([string(credentialsId: 'docker-hub-password', variable: 'DOCKER_PASS')]) {
+                    sh 'echo $DOCKER_PASS | docker login -u your-docker-username --password-stdin'
+                }
+                sh 'docker tag scientific-calculator your-docker-username/scientific-calculator:latest'
+                sh 'docker push your-docker-username/scientific-calculator:latest'
+            }
+        }
         stage('Deploy using Ansible') {
             steps {
-                sh 'ansible-playbook deploy.yml'
+                sh 'ansible-playbook -i inventory deploy.yml'
             }
         }
     }
