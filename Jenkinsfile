@@ -21,7 +21,10 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t scientific-calculator .'
+                script {
+                    // Build Docker image
+                    docker.build("${DOCKER_IMAGE_NAME}", '.')
+                }
             }
         }
         stage('Push to Docker Hub') {
