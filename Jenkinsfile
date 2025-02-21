@@ -19,14 +19,25 @@ pipeline {
                 sh 'python3 -m unittest discover -s . -p "test.py"'
             }
         }
+        // stage('Build Docker Image') {
+        //     steps {
+        //         script {
+        //             // Build Docker image
+        //             docker.build("${DOCKER_IMAGE_NAME}", '.')
+        //         }
+        //     }
+        // }
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build Docker image
-                    docker.build("${DOCKER_IMAGE_NAME}", '.')
+                    sh 'docker --version'  // Check if Docker works
+                    sh 'ls -la'  // List files in the workspace
+                    sh 'whoami'  // Check if Jenkins is the correct user
+                    docker.build("scientific-calculator", '.')
                 }
             }
         }
+
         stage('Push to Docker Hub') {
             steps {
                 withCredentials([string(credentialsId: 'docker-hub-password', variable: 'DOCKER_PASS')]) {
