@@ -1,37 +1,24 @@
-# - name: Pull Docker Image from Docker Hub
-#   hosts: localhost
-#   remote_user: aryanrastogi
-#   become: false
-#   tasks:
-#     - name: Pull Docker Image
-#       docker_image:
-#         name: "aryan7767/scientific-calculator"
-#         source: pull
-#       register: docker_pull_result
-
-#     - name: Display Docker Pull Result
-#       debug:
-#         var: docker_pull_result
-        
-#     - name: Start Docker service
-#       service:
-#         name: docker
-#         state: started
-#     - name: Running container
-#       shell: docker run -it -d --name calculator aryan7767/scientific-calculator /bin/bash
-
 - name: Pull Docker Image from Docker Hub
-  hosts: containers
+  hosts: localhost
   remote_user: aryanrastogi
   become: false
   tasks:
-    - name: Pull latest image
-      command: docker pull aryan7767/scientific-calculator:latest
+    - name: Pull Docker Image
+      docker_image:
+        name: "aryan7767/scientific-calculator"
+        source: pull
+      register: docker_pull_result
 
+    - name: Display Docker Pull Result
+      debug:
+        var: docker_pull_result
+        
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
     - name: Stop existing container (if running)
-      command: docker rm -f calculator-container
-      ignore_errors: yes
-
-    - name: Run new container
-      command: docker run -d --name calculator-container -p 2222:22 aryan7767/scientific-calculator:latest
-
+        command: docker rm -f calculator-container
+        ignore_errors: yes
+    - name: Running container
+      shell:  docker run -d --name calculator-container -p 2222:22 aryan7767/scientific-calculator:latest
