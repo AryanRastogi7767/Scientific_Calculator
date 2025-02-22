@@ -37,14 +37,14 @@ pipeline {
                 }
             }
         }
-
         stage('Push to Docker Hub') {
             steps {
-                withCredentials([string(credentialsId: 'docker-hub-password', variable: 'DOCKER_PASS')]) {
-                    sh 'echo $DOCKER_PASS | docker login -u your-docker-username --password-stdin'
-                }
-                sh 'docker tag scientific-calculator your-docker-username/scientific-calculator:latest'
-                sh 'docker push your-docker-username/scientific-calculator:latest'
+                script{
+                    docker.withRegistry('', 'DockerHubCred') {
+                    sh 'docker tag scientific-calculator aryan7767/scientific-calculator:latest'
+                    sh 'docker push aryan7767/scientific-calculator:latest'
+                    }
+                 }
             }
         }
         stage('Deploy using Ansible') {
