@@ -2,6 +2,8 @@
   hosts: localhost
   remote_user: aryanrastogi
   become: false
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
   tasks:
     - name: Pull Docker Image
       docker_image:
