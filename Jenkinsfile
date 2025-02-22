@@ -33,7 +33,7 @@ pipeline {
                     sh 'docker --version'  // Check if Docker works
                     sh 'ls -la'  // List files in the workspace
                     sh 'whoami'  // Check if Jenkins is the correct user
-                    sh 'docker build -t ${DOCKER_IMAGE_NAME} .
+                    sh 'docker build -t ${DOCKER_IMAGE_NAME} .'
 '
                 }
             }
