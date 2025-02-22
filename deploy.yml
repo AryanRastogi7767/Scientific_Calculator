@@ -18,7 +18,6 @@
         name: docker
         state: started
     - name: Stop existing container (if running)
-        shell: docker rm -f calculator-container
-        ignore_errors: yes
+      shell: docker rm -f calculator-container || true
     - name: Running container
       shell:  docker run -d --name calculator-container -p 2222:22 aryan7767/scientific-calculator:latest
