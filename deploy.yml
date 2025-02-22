@@ -1,10 +1,10 @@
-- hosts: remote_server
+- hosts: myhosts
   tasks:
     - name: Pull latest Docker image
-      shell: docker pull your-dockerhub/scientific-calculator
+      shell: docker pull aryan7767/scientific-calculator
 
     - name: Stop existing container
       shell: docker rm -f calculator-container || true
 
     - name: Run new container
-      shell: docker run -d --name calculator-container your-dockerhub/scientific-calculator
+      shell: docker run -d --name calculator-container aryan7767/scientific-calculator
