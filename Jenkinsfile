@@ -103,6 +103,7 @@ pipeline {
 
         stage('Deploy using Ansible') {
             steps {
+                sh 'pip3 install requests'
                 sh 'ansible-playbook -i inventory deploy.yml'
             }
         }
