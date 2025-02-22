@@ -1,10 +1,21 @@
-- hosts: myhosts
+- name: Pull Docker Image from Docker Hub
+  hosts: localhost
+  remote_user: aryanrastogi
+  become: false
   tasks:
-    - name: Pull latest Docker image
-      shell: docker pull aryan7767/scientific-calculator
+    - name: Pull Docker Image
+      docker_image:
+        name: "aryan7767/scientific-calculator"
+        source: pull
+      register: docker_pull_result
 
-    - name: Stop existing container
-      shell: docker rm -f calculator-container || true
-
-    - name: Run new container
-      shell: docker run -d --name calculator-container aryan7767/scientific-calculator
+    - name: Display Docker Pull Result
+      debug:
+        var: docker_pull_result
+        
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+    - name: Running container
+      shell: docker run -it -d --name calculator aryan7767/scientific-calculator /bin/bash
