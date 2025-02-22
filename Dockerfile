@@ -2,6 +2,7 @@ FROM alpine:latest
 
 # Install dependencies
 RUN apk update && apk add --no-cache python3 py3-pip openssh
+RUN apk add --no-cache py3-requests
 
 # Set root password for SSH
 RUN echo "root:password" | chpasswd
