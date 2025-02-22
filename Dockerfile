@@ -1,16 +1,27 @@
-FROM ubuntu:latest
-# Install SSH
-RUN apt-get update && apt-get install -y openssh-server && \
-    mkdir /var/run/sshd && \
-    echo 'root:password' | chpasswd  # Change the password as needed
-# Allow root login and disable strict host key checking
+FROM alpine:latest
+
+# Install dependencies
+RUN apk update && apk add --no-cache python3 py3-pip openssh
+
+# Set root password for SSH
+RUN echo "root:password" | chpasswd
+
+# Configure SSH to allow root login
 RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-# Expose SSH Port
+
+# Generate SSH keys
+RUN ssh-keygen -A
+
+# Expose SSH port
 EXPOSE 22
-# Start SSH service
-CMD ["/usr/sbin/sshd", "-D"]
+
+# Create working directory and copy files
 WORKDIR /app
 COPY calculator.py /app/
+
+# Make the script executable
 RUN chmod +x /app/calculator.py
-CMD ["python", "calculator.py"]
+
+# Start SSH daemon by default
+CMD ["/usr/sbin/sshd", "-D"]
 
