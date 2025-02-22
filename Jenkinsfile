@@ -32,11 +32,10 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script{
-                    docker.withRegistry('', 'DockerHubCred') {
-                    sh 'docker tag scientific_calculator aryan7767/scientific-calculator:latest'
-                    sh 'docker push aryan7767/scientific-calculator:latest'
-                    }
-                 }
+                    docker.withRegistry('https://index.docker.io/v1/', 'DockerHubCred') {
+                    def image = docker.build("aryan7767/scientific-calculator:latest")
+                    image.push()
+                }
             }
         }
         stage('Deploy using Ansible') {
