@@ -27,18 +27,8 @@ pipeline {
                     sh 'whoami'  // Check if Jenkins is the correct user
                     sh 'docker build -t ${DOCKER_IMAGE_NAME} .'
                 }
-            }
+           }
         }
-        stage('Push Docker Image') {
-    steps {
-        script {
-            sh 'docker login -u aryan7767 -p Docker@7767'
-            sh 'docker tag scientific_calculator aryan7767/scientific-calculator:latest'
-            sh 'docker push aryan7767/scientific-calculator:latest'
-        }
-    }
-}
-
         stage('Push to Docker Hub') {
             steps {
                 script{
