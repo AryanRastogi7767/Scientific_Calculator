@@ -1,25 +1,67 @@
-- name: Pull Docker Image from Docker Hub
+# - name: Pull Docker Image from Docker Hub
+#   hosts: localhost
+#   remote_user: aryanrastogi
+#   become: false
+#   vars:
+#     ansible_python_interpreter: /usr/bin/python3.12
+#   tasks:
+#     - name: Pull Docker Image
+#       docker_image:
+#         name: "aryan7767/scientific-calculator"
+#         source: pull
+#       register: docker_pull_result
+
+#     - name: Display Docker Pull Result
+#       debug:
+#         var: docker_pull_result
+        
+#     - name: Start Docker service
+#       service:
+#         name: docker
+#         state: started
+#     - name: Stop existing container (if running)
+#       shell: docker rm -f calculator-container || true
+#     - name: Running container
+#       shell:  docker run -d --name calculator-container -p 2222:22 aryan7767/scientific-calculator:latest
+
+
+- name: Deploy Scientific Calculator Container
   hosts: localhost
   remote_user: aryanrastogi
-  become: false
+  become: true  # Required for Docker commands
+
   vars:
     ansible_python_interpreter: /usr/bin/python3.12
-  tasks:
-    - name: Pull Docker Image
-      docker_image:
-        name: "aryan7767/scientific-calculator"
-        source: pull
-      register: docker_pull_result
 
-    - name: Display Docker Pull Result
-      debug:
-        var: docker_pull_result
-        
-    - name: Start Docker service
+  tasks:
+    - name: Ensure required Python packages are installed
+      pip:
+        name: 
+          - docker
+          - requests  # Needed for Docker module
+        executable: pip3
+
+    - name: Ensure Docker service is running
       service:
         name: docker
         state: started
-    - name: Stop existing container (if running)
-      shell: docker rm -f calculator-container || true
-    - name: Running container
-      shell:  docker run -d --name calculator-container -p 2222:22 aryan7767/scientific-calculator:latest
+        enabled: true  # Ensures Docker starts on boot
+
+    - name: Pull Docker Image from Docker Hub
+      community.docker.docker_image:
+        name: "aryan7767/scientific-calculator"
+        source: pull
+
+    - name: Remove existing container (if running)
+      community.docker.docker_container:
+        name: calculator-container
+        state: absent  # Ensures old container is removed
+
+    - name: Run the container
+      community.docker.docker_container:
+        name: calculator-container
+        image: "aryan7767/scientific-calculator:latest"
+        state: started
+        restart_policy: always
+        ports:
+          - "2222:22"
