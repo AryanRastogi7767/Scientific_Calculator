@@ -19,14 +19,6 @@ pipeline {
                 sh 'python3 -m unittest discover -s . -p "test.py"'
             }
         }
-        // stage('Build Docker Image') {
-        //     steps {
-        //         script {
-        //             // Build Docker image
-        //             docker.build("${DOCKER_IMAGE_NAME}", '.')
-        //         }
-        //     }
-        // }
         stage('Build Docker Image') {
             steps {
                 script {
@@ -37,6 +29,16 @@ pipeline {
                 }
             }
         }
+        stage('Push Docker Image') {
+    steps {
+        script {
+            sh 'docker login -u aryan7767 -p Docker@7767'
+            sh 'docker tag scientific_calculator aryan7767/scientific-calculator:latest'
+            sh 'docker push aryan7767/scientific-calculator:latest'
+        }
+    }
+}
+
         stage('Push to Docker Hub') {
             steps {
                 script{
