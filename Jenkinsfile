@@ -37,6 +37,7 @@ pipeline {
                     image.push()
                 }
             }
+            }
         }
         stage('Deploy using Ansible') {
             steps {
