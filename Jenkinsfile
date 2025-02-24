@@ -19,15 +19,33 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'pip install -r requirements.txt'
+                sh '''
+                    python3 -m venv venv
+                    source venv/bin/activate
+                    python3 -m pip install --upgrade pip
+                    python3 -m pip install -r requirements.txt
+                '''
             }
         }
 
+
         stage('Run Unit Tests') {
             steps {
-                sh 'pytest --tb=short --disable-warnings'  // Using pytest instead of unittest
+                sh '''
+                    python3 -m venv venv
+                    source venv/bin/activate
+                    python3 -m pip install --upgrade pip
+                    python3 -m pip install -r requirements.txt
+                    pytest test.py --tb=short --disable-warnings
+                '''
             }
         }
+
+        // stage('Run Unit Tests') {
+        //     steps {
+        //         sh 'pytest --tb=short --disable-warnings'  // Using pytest instead of unittest
+        //     }
+        // }
 
         stage('Build Docker Image') {
             steps {
