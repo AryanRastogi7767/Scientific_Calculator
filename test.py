@@ -2,10 +2,6 @@
 
 import pytest
 from fastapi.testclient import TestClient
-<<<<<<< HEAD
-
-=======
->>>>>>> b684c75a362a69aba2b21e6f8cca2a7487e5ef36
 from calculator import app
 
 client = TestClient(app)
