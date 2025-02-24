@@ -31,13 +31,7 @@ pipeline {
 
         stage('Run Unit Tests') {
             steps {
-                sh '''
-                    python3 -m venv venv
-                    source venv/bin/activate
-                    python3 -m pip install --upgrade pip
-                    python3 -m pip install -r requirements.txt
-                    pytest --tb=short --disable-warnings
-                '''
+                sh 'pytest test.py --tb=short --disable-warnings'
             }
         }
 
