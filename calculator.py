@@ -1,54 +1,52 @@
+# calculator.py
+
 import math
 
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
-def square_root(x):
-    return math.sqrt(x)
+app = FastAPI()
+
+# Allow CORS for frontend interaction
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
-def factorial(x):
-    return math.factorial(x)
+@app.get("/")
+def home():
+    return FileResponse("static/index.html")
 
 
-def natural_log(x):
-    if x <= 0:
-        raise ValueError("Natural log is only defined for positive numbers.")
-    return math.log(x)
+@app.get("/sqrt/{x}")
+def square_root(x: float):
+    return {"result": math.sqrt(x)}
 
 
-def power(x, b):
-    return math.pow(x, b)
+@app.get("/factorial/{x}")
+def factorial(x: int):
+    return {"result": math.factorial(x)}
 
 
-def main():
-    while True:
-        print("\nScientific Calculator")
-        print("1. Square Root (√x)")
-        print("2. Factorial (x!)")
-        print("3. Natural Logarithm (ln(x))")
-        print("4. Power Function (x^b)")
-        print("5. Exit")
+@app.get("/ln/{x}")
+def natural_log(x: float):
+    return {"result": math.log(x)}
 
-        choice = input("Choose an operation (1-5): ")
 
-        if choice == "1":
-            x = float(input("Enter a number: "))
-            print("Result:", square_root(x))
-        elif choice == "2":
-            x = int(input("Enter a number: "))
-            print("Result:", factorial(x))
-        elif choice == "3":
-            x = float(input("Enter a number: "))
-            print("Result:", natural_log(x))
-        elif choice == "4":
-            x = float(input("Enter the base: "))
-            b = float(input("Enter the exponent: "))
-            print("Result:", power(x, b))
-        elif choice == "5":
-            print("Exiting...")
-            break
-        else:
-            print("Invalid choice. Please try again.")
+@app.get("/power/{x}/{b}")
+def power(x: float, b: float):
+    return {"result": math.pow(x, b)}
 
 
 if __name__ == "__main__":
-    main()
+    import uvicorn
+
+    uvicorn.run(app, host="127.0.0.1", port=8000)

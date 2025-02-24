@@ -1,81 +1,38 @@
-// pipeline {
-//     agent any
-//     environment {
-//         DOCKER_IMAGE_NAME = 'scientific_calculator'
-//         GITHUB_REPO_URL = 'https://github.com/AryanRastogi7767/Scientific_Calculator.git'
-//     }
-
-//     stages {
-//         stage('Checkout') {
-//             steps {
-//                 script {
-//                     // Checkout the code from the GitHub repository
-//                     git branch: 'main', url: "${GITHUB_REPO_URL}"
-//                 }
-//             }
-//         }
-//         stage('Run Unit Tests') {
-//             steps {
-//                 sh 'python3 -m unittest discover -s . -p "test.py"'
-//             }
-//         }
-//         stage('Build Docker Image') {
-//             steps {
-//                 script {
-//                     sh 'docker --version'  // Check if Docker works
-//                     sh 'ls -la'  // List files in the workspace
-//                     sh 'whoami'  // Check if Jenkins is the correct user
-//                     sh 'docker build -t ${DOCKER_IMAGE_NAME} .'
-//                 }
-//            }
-//         }
-//         stage('Push to Docker Hub') {
-//             steps {
-//                 script{
-//                     docker.withRegistry('https://index.docker.io/v1/', 'DockerHubCred') {
-//                     def image = docker.build("aryan7767/scientific-calculator:latest")
-//                     image.push()
-//                 }
-//             }
-//             }
-//         }
-//         stage('Deploy using Ansible') {
-//             steps {
-//                 sh 'ansible-playbook -i inventory deploy.yml'
-//             }
-//         }
-//     }
-// }
 
 pipeline {
     agent any
     environment {
         DOCKER_IMAGE_NAME = 'scientific_calculator'
+        DOCKER_TAG = 'aryan7767/scientific-calculator:latest'
         GITHUB_REPO_URL = 'https://github.com/AryanRastogi7767/Scientific_Calculator.git'
-        DOCKER_CREDENTIALS_ID = 'DockerHubCred'  // Ensure this is correct in Jenkins
+        DOCKER_CREDENTIALS_ID = 'DockerHubCred'  // Ensure correct Jenkins credential ID
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
                 script {
                     git branch: 'main', url: "${GITHUB_REPO_URL}"
                 }
             }
         }
-        
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'pip install -r requirements.txt'
+            }
+        }
+
         stage('Run Unit Tests') {
             steps {
-                sh 'python3 -m unittest discover -s . -p "test.py"'
+                sh 'pytest --tb=short --disable-warnings'  // Using pytest instead of unittest
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker --version'  // Verify Docker is working
-                    sh 'ls -la'  // Debugging: List files in the workspace
-                    sh 'whoami'  // Debugging: Check user permissions
+                    sh 'docker --version'  // Verify Docker installation
                     sh "docker build -t ${DOCKER_IMAGE_NAME} ."
                 }
            }
@@ -94,10 +51,16 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    def imageTag = "aryan7767/scientific-calculator:latest"
-                    sh "docker tag ${DOCKER_IMAGE_NAME} ${imageTag}"
-                    sh "docker push ${imageTag}"
+                    sh "docker tag ${DOCKER_IMAGE_NAME} ${DOCKER_TAG}"
+                    sh "docker push ${DOCKER_TAG}"
                 }
+            }
+        }
+
+        stage('Clean Up Docker Images') {
+            steps {
+                sh "docker rmi ${DOCKER_TAG} || true"  // Remove old images to free space
+                sh "docker rmi ${DOCKER_IMAGE_NAME} || true"
             }
         }
 

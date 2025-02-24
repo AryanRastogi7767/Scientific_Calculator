@@ -1,20 +1,31 @@
-import unittest
-from calculator import square_root, factorial, natural_log, power
+# test_calculator.py
+
+import pytest
+from fastapi.testclient import TestClient
+from main import app
+
+client = TestClient(app)
 
 
-class TestCalculator(unittest.TestCase):
-    def test_square_root(self):
-        self.assertEqual(square_root(16), 4)
-
-    def test_factorial(self):
-        self.assertEqual(factorial(5), 120)
-
-    def test_natural_log(self):
-        self.assertAlmostEqual(natural_log(2.71828), 1, places=2)
-
-    def test_power(self):
-        self.assertEqual(power(2, 3), 8)
+def test_square_root():
+    response = client.get("/sqrt/9")
+    assert response.status_code == 200
+    assert response.json()["result"] == 3.0
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_factorial():
+    response = client.get("/factorial/5")
+    assert response.status_code == 200
+    assert response.json()["result"] == 120
+
+
+def test_natural_log():
+    response = client.get("/ln/1")
+    assert response.status_code == 200
+    assert response.json()["result"] == 0.0
+
+
+def test_power():
+    response = client.get("/power/2/3")
+    assert response.status_code == 200
+    assert response.json()["result"] == 8.0

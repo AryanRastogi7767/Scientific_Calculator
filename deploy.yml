@@ -14,7 +14,7 @@
 #     - name: Display Docker Pull Result
 #       debug:
 #         var: docker_pull_result
-        
+
 #     - name: Start Docker service
 #       service:
 #         name: docker
@@ -24,14 +24,13 @@
 #     - name: Running container
 #       shell:  docker run -d --name calculator-container -p 2222:22 aryan7767/scientific-calculator:latest
 
-
 - name: Deploy Scientific Calculator Container
   hosts: localhost
   remote_user: aryanrastogi
-  become: true  # Required for managing Docker
+  become: true # Required for managing Docker
 
   vars:
-    ansible_python_interpreter: /usr/bin/python3.12
+    ansible_python_interpreter: ~/.ansible-env/bin/python3.12
 
   tasks:
     - name: Ensure Homebrew is installed
@@ -39,28 +38,9 @@
         path: /opt/homebrew/bin/brew
       register: homebrew_check
 
-    - name: Install Homebrew (if missing)
-      shell: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-      when: not homebrew_check.stat.exists
-
-    - name: Install required Python packages using Homebrew
-      homebrew:
-        name:
-          - python@3.12
-          - docker
-        state: present
-
-    - name: Ensure Python packages are installed inside a virtual environment
-      shell: |
-        python3 -m venv ~/venv
-        source ~/venv/bin/activate
-        pip install docker requests
-      args:
-        executable: /bin/bash
-
     - name: Ensure Docker service is running
       shell: open -a Docker
-      ignore_errors: yes  # Ignore if Docker is already running
+      ignore_errors: yes # Ignore if Docker is already running
 
     - name: Wait for Docker to be available
       command: docker info
@@ -77,7 +57,7 @@
     - name: Remove existing container (if running)
       community.docker.docker_container:
         name: calculator-container
-        state: absent  # Ensures old container is removed
+        state: absent # Ensures old container is removed
 
     - name: Run the container
       community.docker.docker_container:
@@ -87,4 +67,3 @@
         restart_policy: always
         ports:
           - "2222:22"
-
