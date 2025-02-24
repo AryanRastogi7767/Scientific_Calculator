@@ -1,46 +1,30 @@
-# - name: Pull Docker Image from Docker Hub
-#   hosts: localhost
-#   remote_user: aryanrastogi
-#   become: false
-#   vars:
-#     ansible_python_interpreter: /usr/bin/python3.12
-#   tasks:
-#     - name: Pull Docker Image
-#       docker_image:
-#         name: "aryan7767/scientific-calculator"
-#         source: pull
-#       register: docker_pull_result
-
-#     - name: Display Docker Pull Result
-#       debug:
-#         var: docker_pull_result
-
-#     - name: Start Docker service
-#       service:
-#         name: docker
-#         state: started
-#     - name: Stop existing container (if running)
-#       shell: docker rm -f calculator-container || true
-#     - name: Running container
-#       shell:  docker run -d --name calculator-container -p 2222:22 aryan7767/scientific-calculator:latest
-
 - name: Deploy Scientific Calculator Container
   hosts: localhost
-  remote_user: aryanrastogi
-  become: true # Required for managing Docker
+  become: true  # Required for managing Docker
 
   vars:
-    ansible_python_interpreter: ~/.ansible-env/bin/python3.12
+    ansible_python_interpreter: /usr/bin/python3  # Use a standard Python path
 
   tasks:
-    - name: Ensure Homebrew is installed
-      stat:
-        path: /opt/homebrew/bin/brew
-      register: homebrew_check
+    - name: Ensure Docker is installed
+      command: docker --version
+      register: docker_installed
+      ignore_errors: yes
 
-    - name: Ensure Docker service is running
+    - name: Install Docker if not installed
+      when: docker_installed.rc != 0
+      block:
+        - name: Install Homebrew (if needed)
+          command: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          args:
+            creates: /opt/homebrew/bin/brew
+
+        - name: Install Docker using Homebrew
+          command: brew install --cask docker
+
+    - name: Start Docker (if not running)
       shell: open -a Docker
-      ignore_errors: yes # Ignore if Docker is already running
+      ignore_errors: yes  # Ignore error if Docker is already running
 
     - name: Wait for Docker to be available
       command: docker info
@@ -49,7 +33,10 @@
       retries: 10
       delay: 5
 
-    - name: Pull Docker Image from Docker Hub
+    - name: Install required Ansible collections
+      ansible.builtin.command: ansible-galaxy collection install community.docker
+
+    - name: Pull the latest Docker image
       community.docker.docker_image:
         name: "aryan7767/scientific-calculator"
         source: pull
@@ -57,7 +44,7 @@
     - name: Remove existing container (if running)
       community.docker.docker_container:
         name: calculator-container
-        state: absent # Ensures old container is removed
+        state: absent
 
     - name: Run the container
       community.docker.docker_container:
@@ -66,4 +53,4 @@
         state: started
         restart_policy: always
         ports:
-          - "2222:22"
+          - "8000:8000"  # Corrected port mapping for FastAPI
