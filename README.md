@@ -4,14 +4,14 @@
 ---
 
 ## Quick links
-- [Github Repo]()
-- [Docker image on Dockerhub]()
+- [Github Repo](https://github.com/AryanRastogi7767/Scientific_Calculator.git)
+- [Docker image on Dockerhub](https://hub.docker.com/repository/docker/aryan7767/scientific-calculator/general)
 
 --- 
 ## Problem statement
-![Problem statement]()
+![Problem statement](./images/Prob_stmt.png)
 
-More details about the problem statement can be found in [this](./Mini%20Project_Scientific%20Calculator.pdf) document.
+More details about the problem statement can be found in [this](./Mini-Project-Scientific-Calculator.pdf) document.
 
 ---
 ## What is DevOps?
@@ -69,7 +69,7 @@ DevOps is **crucial** in modern **cloud computing, microservices, and AI-driven 
 
 ---
 ## Project structure
-![Project Structure](./screenshots/tree_output.png)  
+![Project Structure](./images/File_Structure.png)  
 
 ####  Root Files
 - **Dockerfile** - Defines instructions for building a Docker image.
@@ -128,7 +128,7 @@ This structured approach ensures **scalability, efficiency, and automation** in 
 
 ---
 ## Code snippets
-![Python code](./screenshots/Math%20Functions.png)  
+![Python code](./images/Math%20Functions.png)  
 
 This Python code defines a simple **FastAPI-based scientific calculator** that provides various mathematical operations as API endpoints. The `@app.get` decorators define routes for different calculations:
 
@@ -142,7 +142,7 @@ Each function extracts parameters from the URL, performs the operation using Pyt
 
 ---
 
-![Python test](./screenshots/test.png)
+![Python test](./images/test.png)
 
 This Python code contains unit tests for a FastAPI-based scientific calculator using a test client. Each function sends a GET request to an API endpoint and verifies the response:
 
@@ -185,7 +185,7 @@ Test results will be logged in `pytest.log`.
 
 ---
 ## Docker build and run
-![Dockerfile](./screenshots/dockerfile.png)  
+![Dockerfile](./images/dockerfile.png)  
 
 This is the dockerfile that is used to generate a container with the python file. We can build the image as follows:
 ```
@@ -312,6 +312,7 @@ Start a new container with the latest image:
 ---
 
 ## Automated Build, Test and Deployment using Jenkins
+![Jenkins Pipeline](./images/jenkins.png)  
 
 ### 1. Checkout Code
 Clones the latest code from the GitHub repository.
