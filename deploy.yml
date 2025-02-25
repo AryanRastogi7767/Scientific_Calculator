@@ -1,5 +1,5 @@
 - name: Deploy Scientific Calculator Container
-  hosts: localhost
+  hosts: containers
   become: true  # Required for managing Docker
 
   vars:
