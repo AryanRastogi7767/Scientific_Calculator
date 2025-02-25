@@ -1,11 +1,18 @@
 - name: Deploy Scientific Calculator Container
   hosts: all
   become: yes # Required for managing Docker
-
+  become_method: sudo
+  become_user: root
   vars:
     ansible_python_interpreter: /Users/aryanrastogi/.ansible-env/bin/python3
 
   tasks:
+    - name: Test sudo without password
+      command: whoami
+      register: result
+    - debug:
+        var: result.stdout
+        
     - name: Ensure Docker is installed
       command: docker --version
       register: docker_installed
