@@ -1,6 +1,6 @@
 - name: Deploy Scientific Calculator Container
-  hosts: containers
-  become: true  # Required for managing Docker
+  hosts: all
+  become: yes  # Required for managing Docker
 
   vars:
     ansible_python_interpreter: /usr/bin/python3  # Use a standard Python path
