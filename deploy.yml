@@ -7,6 +7,12 @@
 
 
   tasks:
+    - name: Allow Ansible to run sudo without a password
+      copy:
+        dest: /etc/sudoers.d/ansible
+        content: "ansible ALL=(ALL) NOPASSWD: ALL"
+      become: yes
+
     - name: Ensure Docker is installed
       command: docker --version
       register: docker_installed
