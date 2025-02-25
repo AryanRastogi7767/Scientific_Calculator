@@ -1,9 +1,9 @@
 - name: Deploy Scientific Calculator Container
   hosts: all
-  become: yes  # Required for managing Docker
+  become: yes # Required for managing Docker
 
   vars:
-    ansible_python_interpreter: /usr/bin/python3  # Use a standard Python path
+    ansible_python_interpreter: /Users/aryanrastogi/.ansible-env/bin/python3
 
   tasks:
     - name: Ensure Docker is installed
@@ -24,7 +24,7 @@
 
     - name: Start Docker (if not running)
       shell: open -a Docker
-      ignore_errors: yes  # Ignore error if Docker is already running
+      ignore_errors: yes # Ignore error if Docker is already running
 
     - name: Wait for Docker to be available
       command: docker info
@@ -53,4 +53,4 @@
         state: started
         restart_policy: always
         ports:
-          - "8000:8000"  # Corrected port mapping for FastAPI
+          - "8000:8000" # Corrected port mapping for FastAPI
