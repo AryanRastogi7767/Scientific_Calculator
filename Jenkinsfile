@@ -41,12 +41,6 @@ pipeline {
             }
         }
 
-        // stage('Run Unit Tests') {
-        //     steps {
-        //         sh 'pytest --tb=short --disable-warnings'  // Using pytest instead of unittest
-        //     }
-        // }
-
         stage('Build Docker Image') {
             steps {
                 script {
