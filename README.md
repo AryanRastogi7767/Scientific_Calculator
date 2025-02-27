@@ -294,46 +294,7 @@ vars:
   ansible_python_interpreter: /Users/aryanrastogi/.ansible-env/bin/python3
 ```
 
-#### 2. Ensure Docker is Installed
-
-Check if Docker is installed, and install it using Homebrew if necessary:
-
-```yaml
-- name: Ensure Docker is installed
-  command: docker --version
-  register: docker_installed
-  ignore_errors: yes
-
-- name: Install Docker if not installed
-  when: docker_installed.rc != 0
-  block:
-    - name: Install Homebrew (if needed)
-      command: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-      args:
-        creates: /opt/homebrew/bin/brew
-
-    - name: Install Docker using Homebrew
-      command: brew install --cask docker
-```
-
-#### 3. Start Docker (if Not Running)
-
-Ensure Docker is running before proceeding:
-
-```yaml
-- name: Start Docker (if not running)
-  shell: open -a Docker
-  ignore_errors: yes
-
-- name: Wait for Docker to be available
-  command: docker info
-  register: docker_status
-  until: docker_status.rc == 0
-  retries: 10
-  delay: 5
-```
-
-#### 4. Install Required Ansible Collections
+#### 2. Install Required Ansible Collections
 
 Install the `community.docker` collection:
 
@@ -342,7 +303,7 @@ Install the `community.docker` collection:
   ansible.builtin.command: ansible-galaxy collection install community.docker
 ```
 
-#### 5. Pull the Latest Docker Image
+#### 3. Pull the Latest Docker Image
 
 Download the latest version of the scientific calculator Docker image:
 
@@ -353,7 +314,7 @@ Download the latest version of the scientific calculator Docker image:
     source: pull
 ```
 
-#### 6. Remove Existing Container (if Running)
+#### 4. Remove Existing Container (if Running)
 
 Ensure no previous instance of the container is running:
 
@@ -364,7 +325,7 @@ Ensure no previous instance of the container is running:
     state: absent
 ```
 
-#### 7. Deploy the Scientific Calculator Container
+#### 5. Deploy the Scientific Calculator Container
 
 Start a new container with the latest image:
 
